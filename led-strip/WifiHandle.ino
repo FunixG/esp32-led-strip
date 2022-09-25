@@ -1,9 +1,13 @@
 #include <WiFi.h>
 
-#define TIME_OUT_WIFI 10000
+#include "WifiHandle.h"
+#include "ConnectToWifi.h"
+
+bool resetWifi = false;
 
 void setupWifiClient() {
   WiFi.setAutoConnect(true);
+  WiFi.setHostname(HOSTNAME);
   WiFi.begin();
 }
 
@@ -11,11 +15,20 @@ bool wifiConnected() {
   return WiFi.isConnected();
 }
 
-char* getWifiClientIp() {
+void disconnectWifi() {
+  resetWifi = true;
+
   if (wifiConnected()) {
-    return WiFi.localIP();
+    WiFi.disconnect();
+  }
+  switchOnAP();
+}
+
+void reconnectWifi() {
+  if (resetWifi) {
+    httpLoopWifiAP();
   } else {
-    return NULL;
+    WiFi.begin();
   }
 }
 
@@ -30,19 +43,14 @@ bool connectToWifi(char* wifi_ssid_to_connect, char* wifi_password_to_connect) {
 
   WiFi.begin(wifi_ssid_to_connect, wifi_password_to_connect);
 
-  while (!WiFi.isConnected()) {
+  while (!wifiConnected()) {
     actualTime = millis();
     if (actualTime - startTime > TIME_OUT_WIFI) {
       return false;
     }
   }
 
-  Serial.println();
-  Serial.println("Success: Wifi connected !");
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-
+  resetWifi = false;
+  switchOffAP();
   return true;
 }

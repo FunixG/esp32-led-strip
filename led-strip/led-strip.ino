@@ -1,23 +1,30 @@
-#include "LedController.h"
+#include <WiFi.h>
 
-unsigned int tmp = 0;
-bool increase = true;
+#include "LedController.h"
+#include "WifiHandle.h"
+
+WiFiServer server(80);
+WiFiClient client;
+
+#define BUTTON_WIFI_RESET_PIN 20
 
 void setup() {
   setupLeds();
   setupWifiClient();
+
+  pinMode(BUTTON_WIFI_RESET_PIN, INPUT);
+  disconnectWifi();
 }
 
 void loop() {
-  if (tmp >= MAX_LUMINOSITY) {
-    increase = false;
-  } else if (tmp <= 0) {
-    increase = true;
+  if (digitalRead(BUTTON_WIFI_RESET_PIN)) {
+    disconnectWifi();
   }
 
-  tmp = increase ? tmp + 1 : tmp - 1;
-  setColor(RED_CHANNEL, 0);
-  setColor(GREEN_CHANNEL, 0);
-  setColor(BLUE_CHANNEL, 0);
-  delay(20);
+  if (wifiConnected()) {
+    digitalWrite(ALERT_LED_PIN, LOW);
+  } else {
+    digitalWrite(ALERT_LED_PIN, HIGH);
+    reconnectWifi();
+  }
 }

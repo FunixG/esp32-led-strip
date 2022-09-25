@@ -1,6 +1,7 @@
-#define RED_PIN 13
+#define RED_PIN 27
 #define GREEN_PIN 12
 #define BLUE_PIN 14
+#define ALERT_LED_PIN 18
 
 #define RED_CHANNEL 0
 #define GREEN_CHANNEL 1
@@ -13,3 +14,4 @@
 
 void setupLeds();
 void setColor(const unsigned int channel, unsigned int luminosity);
+void switchOff();
