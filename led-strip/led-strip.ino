@@ -48,10 +48,10 @@ void requestLedColor() {
   setColor(RED_CHANNEL, red.toInt());
   setColor(GREEN_CHANNEL, green.toInt());
   setColor(BLUE_CHANNEL, blue.toInt());
-  server.send(200, "text/json", "{succes: true}");
+  server.send(200, "text/json", "{success: true}");
 }
 
 void turnOffRequest() {
   switchOff();
-  server.send(200, "text/json", "{succes: true}");
+  server.send(200, "text/json", "{success: true}");
 }
