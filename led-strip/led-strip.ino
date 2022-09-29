@@ -1,19 +1,29 @@
 #include <WiFi.h>
+#include <WebServer.h>
 
-#include "LedController.h"
-#include "WifiHandle.h"
-
-WiFiServer server(80);
-WiFiClient client;
+#define RED_CHANNEL 0
+#define GREEN_CHANNEL 1
+#define BLUE_CHANNEL 2
 
 #define BUTTON_WIFI_RESET_PIN 20
+
+WebServer server(80);
+
+String red;
+String green;
+String blue;
 
 void setup() {
   setupLeds();
   setupWifiClient();
+  setupConfigWifiRoutes();
 
   pinMode(BUTTON_WIFI_RESET_PIN, INPUT);
-  disconnectWifi();
+
+  server.on("/led", HTTP_GET, requestLedColor);
+  server.on("/led/off", HTTP_GET, switchOff);
+
+  server.begin();
 }
 
 void loop() {
@@ -22,9 +32,20 @@ void loop() {
   }
 
   if (wifiConnected()) {
-    digitalWrite(ALERT_LED_PIN, LOW);
+    setAlert(false);
   } else {
-    digitalWrite(ALERT_LED_PIN, HIGH);
+    setAlert(true);
     reconnectWifi();
   }
+  server.handleClient();
+}
+
+void requestLedColor() {
+  red = server.arg("r");
+  green = server.arg("g");
+  blue = server.arg("b");
+
+  setColor(RED_CHANNEL, red.toInt());
+  setColor(GREEN_CHANNEL, green.toInt());
+  setColor(BLUE_CHANNEL, blue.toInt());
 }

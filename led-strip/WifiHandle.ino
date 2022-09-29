@@ -1,7 +1,5 @@
-#include <WiFi.h>
-
-#include "WifiHandle.h"
-#include "ConnectToWifi.h"
+#define TIME_OUT_WIFI 10000
+#define HOSTNAME "Esp32-LedStripController"
 
 bool resetWifi = false;
 
@@ -9,6 +7,7 @@ void setupWifiClient() {
   WiFi.setAutoConnect(true);
   WiFi.setHostname(HOSTNAME);
   WiFi.begin();
+  WiFi.mode(WIFI_STA);
 }
 
 bool wifiConnected() {
@@ -25,15 +24,13 @@ void disconnectWifi() {
 }
 
 void reconnectWifi() {
-  if (resetWifi) {
-    httpLoopWifiAP();
-  } else {
+  if (!resetWifi) {
     WiFi.begin();
   }
 }
 
 //Connect to netwotrk, true if success false otherwise
-bool connectToWifi(char* wifi_ssid_to_connect, char* wifi_password_to_connect) {
+bool connectToWifi(const char* wifi_ssid_to_connect, const char* wifi_password_to_connect) {
   const unsigned long startTime = millis();
   unsigned long actualTime = startTime;
 
@@ -46,6 +43,7 @@ bool connectToWifi(char* wifi_ssid_to_connect, char* wifi_password_to_connect) {
   while (!wifiConnected()) {
     actualTime = millis();
     if (actualTime - startTime > TIME_OUT_WIFI) {
+      switchOnAP();
       return false;
     }
   }
