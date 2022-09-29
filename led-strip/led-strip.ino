@@ -21,7 +21,7 @@ void setup() {
   pinMode(BUTTON_WIFI_RESET_PIN, INPUT);
 
   server.on("/led", HTTP_GET, requestLedColor);
-  server.on("/led/off", HTTP_GET, switchOff);
+  server.on("/led/off", HTTP_GET, turnOffRequest);
 
   server.begin();
 }
@@ -48,4 +48,10 @@ void requestLedColor() {
   setColor(RED_CHANNEL, red.toInt());
   setColor(GREEN_CHANNEL, green.toInt());
   setColor(BLUE_CHANNEL, blue.toInt());
+  server.send(200, "text/json", "{succes: true}");
+}
+
+void turnOffRequest() {
+  switchOff();
+  server.send(200, "text/json", "{succes: true}");
 }
