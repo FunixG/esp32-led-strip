@@ -45,13 +45,40 @@ void requestLedColor() {
   green = server.arg("g");
   blue = server.arg("b");
 
-  setColor(RED_CHANNEL, red.toInt());
-  setColor(GREEN_CHANNEL, green.toInt());
+  if (checkIsNumber(red)) {
+    setColor(RED_CHANNEL, red.toInt());
+  }
+
+  if (checkIsNumber(green)) {
+    setColor(GREEN_CHANNEL, green.toInt());
+  }
+
+  if (checkIsNumber(blue)) {
   setColor(BLUE_CHANNEL, blue.toInt());
+  }
+
   server.send(200, "text/json", "{success: true}");
 }
 
 void turnOffRequest() {
   switchOff();
   server.send(200, "text/json", "{success: true}");
+}
+
+bool checkIsNumber(String data) {
+  if (data == nullptr) {
+    return false;
+  }
+
+  const unsigned int size = data.length();
+  if (size == 0) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < size; ++i) {
+    if (data[i] > '9' || data[i] < '0') {
+      return false;
+    }
+  }
+  return true;
 }
