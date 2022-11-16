@@ -5,7 +5,7 @@
 #define GREEN_CHANNEL 1
 #define BLUE_CHANNEL 2
 
-#define BUTTON_WIFI_RESET_PIN 20
+#define BUTTON_WIFI_RESET_PIN 33
 
 WebServer server(80);
 
@@ -14,11 +14,12 @@ String green;
 String blue;
 
 void setup() {
+  Serial.begin(115200);
   setupLeds();
   setupWifiClient();
   setupConfigWifiRoutes();
 
-  pinMode(BUTTON_WIFI_RESET_PIN, INPUT);
+  pinMode(BUTTON_WIFI_RESET_PIN, INPUT_PULLDOWN);
 
   server.on("/led", HTTP_GET, requestLedColor);
   server.on("/led/off", HTTP_GET, turnOffRequest);
@@ -27,7 +28,8 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(BUTTON_WIFI_RESET_PIN)) {
+  if (digitalRead(BUTTON_WIFI_RESET_PIN) == HIGH) {
+    Serial.println("Button press");
     disconnectWifi();
   }
 
@@ -54,7 +56,7 @@ void requestLedColor() {
   }
 
   if (checkIsNumber(blue)) {
-  setColor(BLUE_CHANNEL, blue.toInt());
+    setColor(BLUE_CHANNEL, blue.toInt());
   }
 
   server.send(200, "text/json", "{success: true}");
