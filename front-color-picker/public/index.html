@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Led Controller</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <h1>Led controller</h1>
+
+  <div>
+    <form action="/led" method="post" id="form-color-set">
+      <div>
+        <label for="color-picker">Enter the color :</label>
+        <input type="color" id="color-picker">
+      </div>
+
+      <div>
+        <input type="submit" value="Set color !">
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <button type="button" id="switch-off-leds">Switch off leds.</button>
+  </div>
+
+  <script src="js/led-controller.js"></script>
+</body>
+
+</html>
